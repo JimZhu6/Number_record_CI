@@ -1,0 +1,144 @@
+$theme-color: #8ec0c9;
+$font-color: #fff;
+
+// body {
+//   position: relative;
+//   width: 100%;
+//   height: 100%;
+// }
+
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+
+header {
+  .nav-wrapper {
+    background-color: $theme-color;
+    padding: 0 22px;
+  }
+
+}
+
+main {
+  flex: 1 0 auto;
+
+  blockquote {
+    display: inline-block;
+    text-align: center;
+    border-left: 5px solid #8ec0c9;
+  }
+
+  text-align: center;
+  padding: 18px;
+
+  .input-box {
+    border: none;
+    position: relative;
+
+    >.input-field {
+      display: inline-block;
+      width: 200px;
+    }
+
+    #fileForm {
+      display: inline-block;
+    }
+
+    #import-hide-txt,
+    #import-hide-excel {
+      width: 118px;
+      height: 36px;
+      cursor: pointer;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      opacity: 0;
+      z-index: 10;
+      font-size: 0;
+    }
+
+    #import-hide-excel {
+      width: 135px;
+    }
+  }
+
+  .view-box {
+    position: relative;
+    text-align: center;
+
+    .search-box {
+      margin: 12px 0;
+      width: 200px;
+      display: inline-block;
+    }
+
+    .view-list {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 8px;
+      width: 600px;
+      display: none;
+
+      li {
+        padding: 2px;
+      }
+    }
+  }
+}
+
+
+.page-footer {
+  background-color: $theme-color;
+}
+
+
+.mask {
+  // display: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.3);
+
+  .mask-box {
+    display: inline-block;
+    width: 400px;
+    top: 39%;
+    transform: translateY(-50%);
+
+    .mask-box-title {
+      background-color: $theme-color;
+      height: 50px;
+      color: $font-color;
+      line-height: 50px;
+      font-size: 18px;
+    }
+
+    .mask-box-main {
+      padding: 20px 30px;
+
+      tr {
+        border: none;
+        display: block;
+
+        td {
+          display: block;
+          padding: 0;
+        }
+      }
+
+      tr:nth-child(2) {
+        display: block;
+        margin-top: 20px;
+        width: 100%;
+      }
+    }
+  }
+}
