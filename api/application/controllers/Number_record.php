@@ -84,15 +84,19 @@ class Number_record extends CI_Controller
 	 */
   public function add_tel($tel)
   {
-    $query = $this->NRM->add_tel($tel);
-    if ($query) {
-      $res['code'] = 200;
-      $res['msg'] = '添加成功';
+    if (!isset($_SESSION['username'])) {
+      $res['code'] = 101;
+      $res['msg'] = '请先登录后再试';
     } else {
-      $res['code'] = 204;
-      $res['msg'] = '添加失败，数据已存在';
+      $query = $this->NRM->add_tel($tel);
+      if ($query) {
+        $res['code'] = 200;
+        $res['msg'] = '添加成功';
+      } else {
+        $res['code'] = 204;
+        $res['msg'] = '添加失败，数据已存在';
+      }
     }
-
     $this->_ajax_output($res);
   }
 
@@ -101,37 +105,42 @@ class Number_record extends CI_Controller
 	 */
   public function add_tel_from_txt()
   {
-    if (is_uploaded_file($_FILES['file']['tmp_name'])) {
-      // 处理文件
-      $root_dir = $_SERVER["DOCUMENT_ROOT"] . "/uploads/";
-      $filename = $_FILES['file']['name'];
-      $filename = time() . "_$filename";
-      $uploadFile = $root_dir . $filename;
-      if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadFile)) {
-        // 将文件存在指定目录
-        $line = count(file($uploadFile));
-        if ($line > 50000) {
-          $res['code'] = 200;
-          $res['msg'] = "操作失败！一次只能添加五万条数据";
-        } else {
-          // 读文件
-          $file = fopen($uploadFile, 'r');
-          $arr = array();
-          $j = 0;
-          while (!feof($file)) {
-            $a = mb_convert_encoding(fgets($file), "UTF-8", "GBK,ASCII,ANSI,UTF-8");
-            $arr[$j] = trim($a);
-            $j++;
-          }
-          fclose($file);
-          // 将读取到的数据数组交给模块操作
-          $query = $this->NRM->add_tel_from_text($arr);
-          if ($query) {
+    if (!isset($_SESSION['username'])) {
+      $res['code'] = 101;
+      $res['msg'] = '请先登录后再试';
+    } else {
+      if (is_uploaded_file($_FILES['file']['tmp_name'])) {
+        // 处理文件
+        $root_dir = $_SERVER["DOCUMENT_ROOT"] . "/uploads/";
+        $filename = $_FILES['file']['name'];
+        $filename = time() . "_$filename";
+        $uploadFile = $root_dir . $filename;
+        if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadFile)) {
+          // 将文件存在指定目录
+          $line = count(file($uploadFile));
+          if ($line > 50000) {
             $res['code'] = 200;
-            $res['msg'] = "成功导入 $line 条数据";
+            $res['msg'] = "操作失败！一次只能添加五万条数据";
           } else {
-            $res['code'] = 204;
-            $res['msg'] = '上传失败';
+            // 读文件
+            $file = fopen($uploadFile, 'r');
+            $arr = array();
+            $j = 0;
+            while (!feof($file)) {
+              $a = mb_convert_encoding(fgets($file), "UTF-8", "GBK,ASCII,ANSI,UTF-8");
+              $arr[$j] = trim($a);
+              $j++;
+            }
+            fclose($file);
+            // 将读取到的数据数组交给模块操作
+            $query = $this->NRM->add_tel_from_text($arr);
+            if ($query) {
+              $res['code'] = 200;
+              $res['msg'] = "成功导入 $line 条数据";
+            } else {
+              $res['code'] = 204;
+              $res['msg'] = '上传失败';
+            }
           }
         }
       }
@@ -145,35 +154,40 @@ class Number_record extends CI_Controller
 	 */
   public function add_tel_from_xls()
   {
-    if (is_uploaded_file($_FILES['file']['tmp_name'])) {
-      // 处理文件
-      $root_dir = $_SERVER["DOCUMENT_ROOT"] . "/uploads/";
-      $filename = $_FILES['file']['name'];
-      $filename = time() . "_$filename";
-      $uploadFile = $root_dir . $filename;
-      if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadFile)) {
-        $reader = IOFactory::createReader("Xls");
-        $spreadsheet = $reader->load($uploadFile);
-        // 获取数据
-        $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
-        // 将文件存在指定目录
-        $line = count($sheetData);
-        if ($line > 50000) {
-          $res['code'] = 200;
-          $res['msg'] = "操作失败！一次只能添加五万条数据";
-        } else {
-          $arr = array();
-          for ($i = 1; $i < $line; $i++) {
-            $arr[$i] = $sheetData[$i]['A'];
-          }
-          // 将读取到的数据数组交给模块操作
-          $query = $this->NRM->add_tel_from_xls($arr);
-          if ($query) {
+    if (!isset($_SESSION['username'])) {
+      $res['code'] = 101;
+      $res['msg'] = '请先登录后再试';
+    } else {
+      if (is_uploaded_file($_FILES['file']['tmp_name'])) {
+        // 处理文件
+        $root_dir = $_SERVER["DOCUMENT_ROOT"] . "/uploads/";
+        $filename = $_FILES['file']['name'];
+        $filename = time() . "_$filename";
+        $uploadFile = $root_dir . $filename;
+        if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadFile)) {
+          $reader = IOFactory::createReader("Xls");
+          $spreadsheet = $reader->load($uploadFile);
+          // 获取数据
+          $sheetData = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+          // 将文件存在指定目录
+          $line = count($sheetData);
+          if ($line > 50000) {
             $res['code'] = 200;
-            $res['msg'] = "成功导入 $line 条数据";
+            $res['msg'] = "操作失败！一次只能添加五万条数据";
           } else {
-            $res['code'] = 204;
-            $res['msg'] = '上传失败';
+            $arr = array();
+            for ($i = 1; $i < $line; $i++) {
+              $arr[$i] = $sheetData[$i]['A'];
+            }
+            // 将读取到的数据数组交给模块操作
+            $query = $this->NRM->add_tel_from_xls($arr);
+            if ($query) {
+              $res['code'] = 200;
+              $res['msg'] = "成功导入 $line 条数据";
+            } else {
+              $res['code'] = 204;
+              $res['msg'] = '上传失败';
+            }
           }
         }
       }
@@ -187,18 +201,23 @@ class Number_record extends CI_Controller
 	 */
   public function mark_tel()
   {
-    $tel = $this->input->post('remarksTel');
-    $remarks = $this->input->post('remarksMsg');
-    $time = time() * 1000;
-    $query = $this->NRM->mark_tel("$tel|$time|$remarks");
-    if ($query) {
-      $res['code'] = 200;
-      $res['data']['msg'] = '标记成功';
-      $res['data']['list']['mark_date'] = $time;
-      $res['data']['list']['remarks'] = $remarks;
+    if (!isset($_SESSION['username'])) {
+      $res['code'] = 101;
+      $res['data']['msg'] = '请先登录后再试';
     } else {
-      $res['code'] = 200;
-      $res['data']['msg'] = '标记失败';
+      $tel = $this->input->post('remarksTel');
+      $remarks = $this->input->post('remarksMsg');
+      $time = time() * 1000;
+      $query = $this->NRM->mark_tel("$tel|$time|$remarks");
+      if ($query) {
+        $res['code'] = 200;
+        $res['data']['msg'] = '标记成功';
+        $res['data']['list']['mark_date'] = $time;
+        $res['data']['list']['remarks'] = $remarks;
+      } else {
+        $res['code'] = 200;
+        $res['data']['msg'] = '标记失败';
+      }
     }
 
     $this->_ajax_output($res);
