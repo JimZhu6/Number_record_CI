@@ -1,33 +1,4 @@
 var tools = (function () {
-	/**
-	 * 页面初始化时执行的函数
-	 */
-	var _pageInit = function () {
-		// 检测当前是否已登录
-		$.ajax({
-			url: "/api/Number_record/test_login",
-			success: function (res) {
-				if (res.code === 200) {
-					_setLoginBoxName(res.msg.username);
-				}
-			}
-		});
-		// 检测当前数据库里的数据量
-		$.ajax({
-			url: "/api/Number_record/get_count",
-			success: function (res) {
-				if (res.code === 200) {
-					let txt =
-						"目前数据库里共有" +
-						res.data +
-						"个号码。 <a class='btn-floating btn-small waves-effect waves-light' id='getCountBtn'><i class='material-icons'>refresh</i></a>";
-					$("#blockquote").html(txt);
-				}
-			}
-		});
-	};
-
-	var _bast_url = "127.0.0.1";
 
 	/**
 	 * 首页绑定事件函数
@@ -66,7 +37,7 @@ var tools = (function () {
 		// 获取数据库号码总数按钮
 		$(document).on("click", "#getCountBtn", function (e) {
 			$.ajax({
-				url: "/api/Number_record/get_count",
+				url: "/Number_record/get_count",
 				success: function (res) {
 					if (res.code === 200) {
 						let txt =
@@ -99,7 +70,7 @@ var tools = (function () {
 			let fd = new FormData();
 			fd.append("file", f);
 			$.ajax({
-				url: "/api/Number_record/add_tel_from_txt",
+				url: "/Number_record/add_tel_from_txt",
 				type: "post",
 				data: fd,
 				processData: false,
@@ -120,7 +91,7 @@ var tools = (function () {
 			let fd = new FormData();
 			fd.append("file", f);
 			$.ajax({
-				url: "/api/Number_record/add_tel_from_xls",
+				url: "/Number_record/add_tel_from_xls",
 				type: "post",
 				data: fd,
 				processData: false,
@@ -183,10 +154,11 @@ var tools = (function () {
 			});
 			return;
 		}
-		$.post("/api/Number_record/login", data, function (res) {
+		$.post("/Number_record/login", data, function (res) {
 			if (res.code === 200) {
 				_setLoginBoxName(res.msg.username);
 				$("#loginBox").addClass("scale-out");
+				$(document).html(res.html);
 			}
 			M.toast({
 				html: res.msg.text
@@ -213,7 +185,7 @@ var tools = (function () {
 			return;
 		}
 		$.ajax({
-			url: "/api/Number_record/add_tel/" + text,
+			url: "/Number_record/add_tel/" + text,
 			success: function (res) {
 				M.toast({
 					html: res.msg
@@ -236,7 +208,7 @@ var tools = (function () {
 			return;
 		}
 		$.ajax({
-			url: "/api/Number_record/search_tel/" + text,
+			url: "/Number_record/search_tel/" + text,
 			success: function (res) {
 				let data = res.data;
 				if (res.code === 200) {
@@ -304,7 +276,7 @@ var tools = (function () {
 			remarksTel: tel,
 			remarksMsg: msg
 		};
-		$.post("/api/Number_record/mark_tel", data, function (res) {
+		$.post("/Number_record/mark_tel", data, function (res) {
 			if (res.code === 200) {
 				$("#markMsgBox").addClass("scale-out");
 				M.toast({
@@ -328,7 +300,7 @@ var tools = (function () {
 			} else {
 				$("#markMsgBox").addClass("scale-out");
 				M.toast({
-					html: res.data.msg
+					html: res.msg
 				});
 			}
 		});
@@ -369,7 +341,6 @@ var tools = (function () {
 	};
 
 	return {
-		pageInit: _pageInit,
 		numberRecordBindEvent: _numberRecordBindEvent,
 		homePageBindEvent: _homePageBindEvent
 	};
